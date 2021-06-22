@@ -19,76 +19,25 @@
 /* exported init */
 const Meta = imports.gi.Meta;
 
+const Manager = global.workspace_manager
+
 class Extension {
     constructor() {
         this.handles = [];
-        this.workspaces = new Set();
-
-        //this.update_watched_workspaces()
-    }
-
-    check_current_workspace() {
-        const id = global.workspace_manager.get_active_workspace_index();
-        this.check_workspace(id)
-    }
-
-    check_workspace(id) {
-        try {
-            // XXX: passing the workspace breaks everything, so we pass ids...
-            const ws = global.workspace_manager.get_workspace_by_index(id);
-            // XXX: should probably check it's not the last workspace.
-            if (! ws.list_windows().length) {
-                this.workspaces.delete(ws.toString());
-                global.workspace_manager.remove_workspace(ws, 0);
-            }
-        } catch {
-            // nothing
-        }
-    }
-
-    workspaces_forEach(fn) {
-        for (let i = 0; i < global.workspace_manager.get_n_workspaces(); i++) {
-            try {
-                const ws = global.workspace_manager.get_workspace_by_index(i);
-                fn(ws, i);
-            } catch {
-                // nothing
-            }
-
-        }
-    }
-
-    find_workspace_index(ws) {
-        let index = -1;
-        this.workspaces_forEach((w, i) => {
-            if (w === ws)
-                index = i;
-        })
-
-        return index;
-    }
-
-    update_watched_workspaces() {
-        this.workspaces_forEach((ws, i) => {
-            const wss = ws.toString();
-            if (! this.workspaces.has(wss)) {
-                this.workspaces.add(wss)
-                ws.connect('window-removed',
-                           () => this.check_workspace(
-                               this.find_workspace_index(ws)));
-            }
-        })
     }
 
     enable() {
         this.handles.push(
-            global.window_manager.connect(
-                'destroy',
-                () => this.check_current_workspace()))
-        this.handles.push(
-            global.workspace_manager.connect(
-                'workspace-added',
-                () => this.update_watched_workspaces())) 
+            global.window_manager.connect('destroy', () => {
+                try {
+                    const ws = Manager.get_active_workspace()
+                    // XXX: should probably check it's not the last workspace.
+                    if (! ws.list_windows().length)
+                        Manager.remove_workspace(ws, 0)
+                } catch {
+                    // nothing
+                }
+        }))
     }
 
     disable() {

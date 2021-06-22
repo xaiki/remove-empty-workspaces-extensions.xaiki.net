@@ -1,6 +1,6 @@
 {
   "name": "Remove empty workspaces",
-  "description": "remove empty workspaces\n\n  GNOME 40 does not remove empty workspaces if they are not the last one, this is extremely annoying if you open a workspace to do a task and close all of your windows when you're done.\n\nno more window dance, just remove the workspace if it has no more windows on it.",
+  "description": "remove empty workspaces\n\n  GNOME 40 does not remove empty workspaces if they are not the last one, this is extremely annoying if you go out, do a task and close all of your windows.\n\nno more window dance, just remove the workspace if it has no more windows on it.",
   "uuid": "remove-empty-workspaces@extensions.xaiki.net",
   "shell-version": [
     "40"
